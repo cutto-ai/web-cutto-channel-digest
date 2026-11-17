@@ -47,3 +47,16 @@ Tests cover source timestamp resolution, missing IDs, out-of-range captions, emp
 ## Usage measurement
 
 Local job events record discovery, confirmation, acquisition and analysis outcomes. No external analytics platform is connected for this localhost demo. A saved usage dashboard and real-user usage acceptance remain deferred; technical tests do not prove user value.
+
+## Backend v1: onboarding, dashboard and search
+
+The backend now exposes `/api/v1` for a separate frontend. See [the integration guide](docs/backend-api/README.md), [OpenAPI 3.1 contract](docs/backend-api/openapi.json), and `lib/backend/types.ts`. Regenerate the schema with `bun scripts/generate-openapi.ts` after contract changes.
+
+- Persist a local profile, occupation, tech stack and task-to-stack associations; update saved preferences separately from temporary searches.
+- Discover verified YouTube channel/video candidates, then explicitly confirm subscriptions. Confirmation saves selections; `POST /api/v1/daily` starts acquisition and analysis.
+- Return up to three ranked video cards, source-grounded chapters with durations, and a cross-video briefing with validated source references.
+- Persist **all** generated titles, summaries, recommendation reasons, chapter labels and briefing text in `zh-CN`, `en`, and `ja`. Playback, timestamps and source evidence remain original. Frontend language switching needs no model call.
+- Cache daily runs by local calendar date, timezone, preference version and subscription revision. Reuse valid downloads and analyses. Handle partial failures and retry explicitly.
+- Serialize JSON writes with atomic replacement in `.data/backend/state.json`. One process and one local profile only; no scheduler, accounts or cloud deployment.
+
+This backend addition does not modify the existing frontend. The original demo API remains usable. Automated tests cover profile validation, stale edits, temporary search, candidate confirmation, task recovery, request deduplication, multilingual completeness, citations, partial failure and HTTP origin/body limits. Live-provider verification is reported separately in the PR.

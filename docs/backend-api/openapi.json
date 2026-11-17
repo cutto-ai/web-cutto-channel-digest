@@ -1,0 +1,1423 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Channel Digest localhost backend",
+    "version": "1.0.0",
+    "description": "Single local profile. All generated display text is stored in zh-CN, en, ja. See docs/backend-api/README.md for lifecycle, limits and recovery."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3210/api/v1"
+    }
+  ],
+  "paths": {
+    "/meta": {
+      "get": {
+        "operationId": "getMeta",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/components/schemas/Profile"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "saveProfile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Profile"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/preferences": {
+      "patch": {
+        "operationId": "updatePreferences",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferenceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Profile"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discoveries": {
+      "post": {
+        "operationId": "discover",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Poll returned job ID for completion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Task"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "operationId": "getJob",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/JobResponse"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "operationId": "getSubscriptions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Subscriptions"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "confirmRecommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Confirmation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Subscriptions"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{kind}/{id}": {
+      "delete": {
+        "operationId": "removeSubscription",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "revision"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "channels",
+                "videos"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Subscriptions"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/daily": {
+      "post": {
+        "operationId": "generateDaily",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh": {
+                    "type": "boolean"
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Poll returned job ID for completion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Task"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "operationId": "getDashboard",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Dashboard"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error; HTTP 400/403/404/409/413/415/500/503",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Localized": {
+        "type": "object",
+        "properties": {
+          "zh-CN": {
+            "type": "string",
+            "minLength": 1
+          },
+          "en": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ja": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "zh-CN",
+          "en",
+          "ja"
+        ]
+      },
+      "ProfileInput": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "occupation": {
+            "type": "string",
+            "enum": [
+              "student",
+              "backend_developer",
+              "frontend_developer",
+              "fullstack_developer",
+              "data_analyst",
+              "product_manager",
+              "tech_hobbyist",
+              "other"
+            ]
+          },
+          "occupationOther": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "techStack": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "techStackIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "techStackIds"
+              ]
+            }
+          },
+          "interest": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "preferredCreators": {
+            "type": "string"
+          },
+          "excludedTopics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputLocale": {
+            "type": "string",
+            "enum": [
+              "zh-CN",
+              "en",
+              "ja"
+            ]
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision",
+          "name",
+          "occupation",
+          "techStack",
+          "tasks",
+          "interest",
+          "outputLocale",
+          "timeZone"
+        ]
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "occupation": {
+            "type": "string",
+            "enum": [
+              "student",
+              "backend_developer",
+              "frontend_developer",
+              "fullstack_developer",
+              "data_analyst",
+              "product_manager",
+              "tech_hobbyist",
+              "other"
+            ]
+          },
+          "occupationOther": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "techStack": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "techStackIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "techStackIds"
+              ]
+            }
+          },
+          "interest": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "preferredCreators": {
+            "type": "string"
+          },
+          "excludedTopics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputLocale": {
+            "type": "string",
+            "enum": [
+              "zh-CN",
+              "en",
+              "ja"
+            ]
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "preferenceVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "occupation",
+          "occupationOther",
+          "techStack",
+          "tasks",
+          "interest",
+          "preferredCreators",
+          "excludedTopics",
+          "outputLocale",
+          "timeZone",
+          "revision",
+          "preferenceVersion",
+          "updatedAt"
+        ]
+      },
+      "PreferenceUpdate": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "techStack": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "techStackIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "techStackIds"
+              ]
+            }
+          },
+          "interest": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500
+          },
+          "preferredCreators": {
+            "type": "string"
+          },
+          "excludedTopics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputLocale": {
+            "type": "string",
+            "enum": [
+              "zh-CN",
+              "en",
+              "ja"
+            ]
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision"
+        ]
+      },
+      "RecommendedChannel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Localized"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url",
+          "reason"
+        ]
+      },
+      "RecommendedVideo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number"
+          },
+          "titleI18n": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "relevance": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "channelId",
+          "channel",
+          "titleI18n",
+          "reason",
+          "relevance"
+        ]
+      },
+      "Discovery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "preferenceVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "query": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendedChannel"
+            }
+          },
+          "videos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendedVideo"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "preferenceVersion",
+          "query",
+          "createdAt",
+          "channels",
+          "videos"
+        ]
+      },
+      "Subscriptions": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendedChannel"
+            }
+          },
+          "videos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendedVideo"
+            }
+          }
+        },
+        "required": [
+          "revision",
+          "channels",
+          "videos"
+        ]
+      },
+      "Confirmation": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "discoveryId": {
+            "type": "string"
+          },
+          "channelIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "videoIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "revision",
+          "discoveryId",
+          "channelIds",
+          "videoIds"
+        ]
+      },
+      "Chapter": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "startSeconds": {
+            "type": "number"
+          },
+          "endSeconds": {
+            "type": "number"
+          },
+          "durationSeconds": {
+            "type": "number"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "reason",
+          "startSeconds",
+          "endSeconds",
+          "durationSeconds",
+          "evidence"
+        ]
+      },
+      "Clip": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "originalTitle": {
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "relevance": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "url": {
+            "type": "string"
+          },
+          "mediaUrl": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number"
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Chapter"
+            }
+          }
+        },
+        "required": [
+          "videoId",
+          "channelId",
+          "channel",
+          "originalTitle",
+          "title",
+          "summary",
+          "reason",
+          "relevance",
+          "url",
+          "mediaUrl",
+          "durationSeconds",
+          "chapters"
+        ]
+      },
+      "Failure": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "$ref": "#/components/schemas/Localized"
+          }
+        },
+        "required": [
+          "sourceId",
+          "code",
+          "message"
+        ]
+      },
+      "Briefing": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/Localized"
+          },
+          "takeaways": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "$ref": "#/components/schemas/Localized"
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "videoId": {
+                        "type": "string"
+                      },
+                      "chapterId": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "videoId",
+                      "chapterId"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "text",
+                "sources"
+              ]
+            }
+          }
+        },
+        "required": [
+          "summary",
+          "takeaways"
+        ]
+      },
+      "Daily": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "preferenceVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "subscriptionRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "generatedAt": {
+            "type": "string"
+          },
+          "clips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Clip"
+            }
+          },
+          "briefing": {
+            "$ref": "#/components/schemas/Briefing"
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Failure"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "timeZone",
+          "preferenceVersion",
+          "subscriptionRevision",
+          "generatedAt",
+          "clips",
+          "briefing",
+          "failures"
+        ]
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "discovery",
+              "daily"
+            ]
+          },
+          "status": {
+            "enum": [
+              "running",
+              "done",
+              "partial",
+              "error"
+            ]
+          },
+          "stage": {
+            "enum": [
+              "searching",
+              "downloading",
+              "analyzing",
+              "briefing",
+              "complete",
+              "failed"
+            ]
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "resultId": {
+            "type": "string"
+          },
+          "cacheKey": {
+            "type": "string"
+          },
+          "error": {
+            "$ref": "#/components/schemas/Failure"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "stage",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "JobResponse": {
+        "type": "object",
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/Task"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Discovery"
+              },
+              {
+                "$ref": "#/components/schemas/Daily"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "job",
+          "result"
+        ]
+      },
+      "Dashboard": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "preferenceVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "subscriptionRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "daily": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Daily"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "date",
+          "timeZone",
+          "preferenceVersion",
+          "subscriptionRevision",
+          "daily"
+        ]
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "occupations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "label": {
+                  "$ref": "#/components/schemas/Localized"
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ]
+            }
+          },
+          "sourceLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxVideosPerDaily": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxSubscriptions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "configured": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "locales",
+          "occupations",
+          "sourceLanguages",
+          "maxVideosPerDaily",
+          "maxSubscriptions",
+          "configured"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "$ref": "#/components/schemas/Localized"
+              },
+              "field": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}
