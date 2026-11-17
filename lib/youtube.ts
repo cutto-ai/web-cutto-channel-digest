@@ -2,6 +2,8 @@ import { spawn } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve, isAbsolute } from "node:path";
 import { settings } from "./harness";
+import { randomUUID } from "node:crypto";
+import { validArtifacts } from "./recovery";
 
 export function command(
   exe: string,
@@ -110,23 +112,21 @@ export async function downloadVideo(id: string) {
   const receipt = resolve(root, "receipt.json");
   try {
     const cached = JSON.parse(await readFile(receipt, "utf8"));
-    await readFile(
-      cached.files.find((p: string) => p.endsWith(".timestamped.txt")),
-    );
-    return cached;
+    if (await validArtifacts(cached.files, root)) return cached;
   } catch {}
   const { script } = await settings();
   if (!script || !isAbsolute(script))
     throw new Error("请配置 YOUTUBE_DOWNLOAD_SCRIPT 的绝对路径。");
   await mkdir(root, { recursive: true });
+  const attempt = resolve(root, `attempt-${randomUUID()}`);
   const output = await command(
     "bun",
-    [script, `https://www.youtube.com/watch?v=${id}`, root],
+    [script, `https://www.youtube.com/watch?v=${id}`, attempt],
     12 * 60 * 1000,
   );
   const start = output.lastIndexOf("\n{");
   const result = JSON.parse(output.slice(start < 0 ? 0 : start + 1));
-  if (!Array.isArray(result.files) || result.files.length !== 3)
+  if (!(await validArtifacts(result.files, root)))
     throw new Error("下载 Skill 未返回完整文件。");
   await writeFile(receipt, JSON.stringify(result, null, 2));
   return result;

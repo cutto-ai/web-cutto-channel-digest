@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { agent } from "./harness";
 import { channelVideos, downloadVideo, searchVideos } from "./youtube";
+import { reserveAndSave } from "./recovery";
 import {
   parseTranscript,
   validateHighlights,
@@ -57,13 +58,17 @@ export async function createJob(interest: string) {
     createdAt: new Date().toISOString(),
   };
   jobs.set(job.id, job);
-  active.add(job.id);
-  await save(job);
+  try {
+    await reserveAndSave(active, job.id, () => save(job));
+  } catch (error) {
+    jobs.delete(job.id);
+    throw error;
+  }
   void discover(job)
     .catch(async (e) => {
       job.status = "error";
       job.error = cleanError(e);
-      await save(job);
+      await save(job).catch(() => {});
     })
     .finally(() => active.delete(job.id));
   return job;
@@ -125,14 +130,18 @@ export async function confirmJob(id: string, channelIds: string[]) {
   if (!selected.length || selected.length > 3)
     throw new Error("请选择 1–3 个已推荐频道。");
   if (active.size) throw new Error("已有任务正在运行，请稍后重试。");
-  active.add(id);
   job.status = "downloading";
-  await save(job);
+  try {
+    await reserveAndSave(active, id, () => save(job));
+  } catch (error) {
+    job.status = "confirm";
+    throw error;
+  }
   void processChannels(job, selected)
     .catch(async (e) => {
       job.status = "error";
       job.error = cleanError(e);
-      await save(job);
+      await save(job).catch(() => {});
     })
     .finally(() => active.delete(id));
   return job;
@@ -147,10 +156,15 @@ async function processChannels(job: Job, channels: Channel[]) {
         "视频获取 Agent",
         `读取 ${channel.name} 的最近 6 个视频`,
       );
-      const candidates = await channelVideos(channel.id);
+      const recent = await channelVideos(channel.id);
+      const candidates = [
+        ...new Map(
+          [...channel.examples, ...recent].map((v: any) => [v.id, v]),
+        ).values(),
+      ];
       if (!candidates.length) throw new Error("频道没有可处理的视频。");
       const choice = await agent("video-acquisition", {
-        task: 'Choose ONE most relevant video from these verified channel uploads. Prefer a finished long-form video between 5 and 45 minutes. Return {"videoId":"...","reason":"..."}. Do not invent IDs.',
+        task: 'Choose ONE most relevant video from these verified channel videos, including search matches and recent uploads. Relevance takes priority over recency. Prefer a finished long-form video between 5 and 45 minutes when duration is known. Return {"videoId":"...","reason":"..."}. Do not invent IDs.',
         interest: job.interest,
         candidates,
       });

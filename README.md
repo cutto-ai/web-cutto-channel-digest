@@ -20,7 +20,7 @@ Open http://localhost:3210. The application binds only to loopback. The model pr
 1. Enter an interest, goal and optional exclusions.
 2. The channel-discovery agent produces a search query, receives real yt-dlp search results, and ranks up to three distinct channels from those results. This is a ranking of retrieved candidates, not a global YouTube ranking.
 3. Select channels and confirm. No media download starts before this step.
-4. The acquisition agent selects one video from each channel's six most recent uploads. The application executes the existing bounded download Skill.
+4. The acquisition agent selects one video from search-matched videos and each channel's six most recent uploads. The application executes the existing bounded download Skill.
 5. The analysis agent reads all timestamped transcript segments in batches. Code resolves the selected segment IDs to actual timestamps and rejects invalid ranges. Click a highlight to seek in the downloaded video.
 
 The three roles run in separate DeepSeek Harness sessions. The application performs the bounded yt-dlp operations and supplies verified results to the agent. Harness uses its official `sdk-minimal` profile with shell and filesystem tools disabled. This is not yet a distributable Harness plugin; extraction and publication are deferred until requested.
@@ -30,7 +30,7 @@ The three roles run in separate DeepSeek Harness sessions. The application perfo
 - Single local presenter, one running workflow at a time. No cloud deployment or multi-user authentication.
 - The existing download Skill requires native 1080p, original English audio and original English captions (manual or automatic). Unsupported videos fail visibly. It does not use browser cookies or bypass login requirements.
 - Analysis is based on speech transcripts, not visual frame analysis. Empty highlights are a valid result.
-- Downloads and successful receipts are cached in `.data/media`. Job state and activity records are in `.data/jobs`. A server restart marks interrupted jobs as failed; start a new workflow to retry. Completed video downloads are reused.
+- Downloads and successful receipts are cached in `.data/media`. Job state and activity records are in `.data/jobs`. A server restart marks interrupted jobs as failed; start a new workflow to retry. Completed video downloads are reused only after checking all three files. Incomplete caches are reacquired into a fresh attempt directory while preserving remaining files.
 - SDK and runtime are pinned to `0.2.2-rc.3`. Config-only initialization does not prove provider credentials or inference compatibility.
 - First-time 1080p downloads can take several minutes. Select one channel for the initial demonstration.
 
